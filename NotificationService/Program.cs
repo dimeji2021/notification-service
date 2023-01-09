@@ -1,5 +1,7 @@
 ﻿using NotificationService.Notification.Domain.Repository;
+using NotificationService.Notification.Domain.Utilities;
 using NotificationService.Notification.Infrastructure.RepositoryImpl;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,8 +11,13 @@ builder.Services.AddControllers();
 builder.Services.AddScoped<ISendEmail, SendEmail>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
 var app = builder.Build();
+
+
+var scope = app.Services.CreateScope(); 
+var sendEmail = scope.ServiceProvider.GetRequiredService<ISendEmail>();
+var sub = new Suscriber(sendEmail);
+sub.Suscribe();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

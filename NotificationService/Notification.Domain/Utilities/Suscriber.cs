@@ -8,9 +8,10 @@ using System.Text;
 
 namespace NotificationService.Notification.Domain.Utilities
 {
-    public class Suscriber
+    public class Suscriber 
     {
         private static ConnectionMultiplexer connection = ConnectionMultiplexer.Connect("localhost:6379");
+
         private const string Channel = "providus-channel";
         private readonly ISendEmail _sendEmail;
 
@@ -22,11 +23,9 @@ namespace NotificationService.Notification.Domain.Utilities
         public void Suscribe()
         {
             var pubsub = connection.GetSubscriber();
-
             pubsub.SubscribeAsync(Channel, (channel, message) =>
             {
                 var res = JsonConvert.DeserializeObject<SendEmailRequest>(message);
-                Console.WriteLine(res);
                 _sendEmail.SendMail(res);
             });
         }
